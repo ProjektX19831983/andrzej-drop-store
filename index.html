@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andrzej Drop Store - Geox Respira 23</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0b0b0b; color: #f1f1f1; margin: 0; padding: 0; }
+        header { background: #141414; text-align: center; padding: 25px 15px; border-bottom: 2px solid #ff9800; }
+        .logo-box { display: inline-block; border: 2px solid #ff9800; padding: 6px 18px; border-radius: 6px; margin-bottom: 8px; background: #111; }
+        h1 { color: #ff9800; margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase; }
+        p.subtitle { color: #aaa; margin: 4px 0 0 0; font-size: 13px; }
+        
+        .container { max-width: 850px; margin: 25px auto; padding: 0 15px; }
+        .product-card { background: #161616; border-radius: 12px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.7); border: 1px solid #2a2a2a; margin-bottom: 25px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
+        @media(max-width: 600px) { .product-card { grid-template-columns: 1fr; } }
+
+        /* Luksusowe tło studyjne z przycięciem kadru, aby ukryć tło/kolana */
+        .studio-backdrop { 
+            background: radial-gradient(circle, #2a2a2a 0%, #0d0d0d 100%); 
+            padding: 15px; 
+            border-radius: 10px; 
+            border: 2px solid #ff9800; 
+            margin-bottom: 12px; 
+            text-align: center; 
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.9);
+            position: relative;
+            overflow: hidden;
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .main-img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; border-radius: 6px; display: block; }
+        
+        .thumbs { display: flex; gap: 6px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; }
+        .thumbs img { width: 50px; height: 50px; object-fit: contain; border-radius: 4px; border: 2px solid #444; cursor: pointer; transition: 0.2s; background: #1a1a1a; }
+        .thumbs img:hover, .thumbs img.active { border-color: #ff9800; transform: scale(1.05); }
+
+        /* Panel Sprzedawcy */
+        .admin-panel { background: #1a1a1a; border: 1px solid #ff9800; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+        .admin-panel h4 { color: #ff9800; margin: 0 0 6px 0; font-size: 12px; text-transform: uppercase; }
+        .admin-btn { background: #ff9800; color: #000; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; display: inline-block; }
+        .admin-btn:hover { background: #f57c00; }
+        #adminFileInput { display: none; }
+
+        .badge { background: #d32f2f; color: white; padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; display: inline-block; text-transform: uppercase; margin-bottom: 10px; }
+        .product-title { font-size: 20px; margin: 0 0 5px 0; color: #fff; }
+        .specs { color: #bbb; font-size: 13px; margin-bottom: 12px; }
+        .specs span { color: #ff9800; font-weight: bold; }
+        
+        .condition-box { background: #1f1f1f; padding: 10px; border-left: 4px solid #ff9800; font-size: 13px; color: #ddd; line-height: 1.4; border-radius: 0 6px 6px 0; margin-bottom: 12px; }
+        
+        .price-section { display: flex; align-items: center; gap: 12px; margin: 10px 0; }
+        .old-price { text-decoration: line-through; color: #777; font-size: 16px; }
+        .new-price { color: #4caf50; font-size: 26px; font-weight: bold; }
+        
+        .btn { display: block; width: 100%; background: #ff9800; color: #000; text-align: center; padding: 12px; font-weight: bold; text-decoration: none; border-radius: 6px; font-size: 15px; box-sizing: border-box; margin-top: 10px; }
+        .btn:hover { background: #f57c00; }
+
+        .product-qr { text-align: center; background: #1f1f1f; padding: 12px; border-radius: 8px; border: 1px solid #333; }
+        .product-qr img { width: 130px; height: 130px; border-radius: 4px; border: 2px solid #fff; }
+        .product-qr span { font-size: 11px; color: #aaa; display: block; margin-top: 6px; font-weight: bold; }
+
+        .info-box { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 18px; margin-top: 25px; font-size: 13px; color: #bbb; line-height: 1.6; }
+        .info-box h3 { color: #ff9800; margin-top: 0; font-size: 15px; }
+
+        .blik-card { background: #1f1f1f; border: 1px dashed #ff9800; padding: 12px; border-radius: 8px; text-align: center; margin: 12px 0; }
+        .blik-number { font-size: 22px; color: #4caf50; font-weight: bold; letter-spacing: 2px; margin: 5px 0; }
+
+        .rules { font-size: 12px; color: #888; border-top: 1px dashed #333; padding-top: 10px; margin-top: 15px; }
+
+        footer { text-align: center; padding: 20px; color: #555; font-size: 12px; border-top: 1px solid #222; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-box">
+            <h1>ANDRZEJ DROP STORE</h1>
+        </div>
+        <p class="subtitle">Selekcja, markowe obuwie i unikalne perełki. 100% uczciwe opisy bez ściemy.</p>
+    </header>
+
+    <div class="container">
+        <div class="product-card">
+            <div>
+                <div class="studio-backdrop">
+                    <img src="geox.jpg" alt="Geox B Gulpbw M" class="main-img" id="currentMainImg">
+                </div>
+
+                <div class="thumbs" id="thumbsContainer">
+                    <img src="geox.jpg" alt="Główne" onclick="changeImg('geox.jpg', this)" class="active">
+                    <img src="1.jpg" alt="Foto 1" onclick="changeImg('1.jpg', this)" onerror="this.style.display='none'">
+                    <img src="2.jpg" alt="Foto 2" onclick="changeImg('2.jpg', this)" onerror="this.style.display='none'">
+                    <img src="3.jpg" alt="Foto 3" onclick="changeImg('3.jpg', this)" onerror="this.style.display='none'">
+                    <img src="4.jpg" alt="Foto 4" onclick="changeImg('4.jpg', this)" onerror="this.style.display='none'">
+                    <img src="5.jpg" alt="Foto 5" onclick="changeImg('5.jpg', this)" onerror="this.style.display='none'">
+                    <img src="6.jpg" alt="Foto 6" onclick="changeImg('6.jpg', this)" onerror="this.style.display='none'">
+                </div>
+
+                <div class="admin-panel">
+                    <h4>🔒 Panel Sprzedawcy</h4>
+                    <label for="adminFileInput" class="admin-btn">📁 Dodaj kolejne zdjęcie z dysku</label>
+                    <input type="file" id="adminFileInput" accept="image/*" onchange="adminAddImage(event)">
+                </div>
+
+                <span class="badge">Oryginał / Z Pudełkiem</span>
+                <h2 class="product-title">Buty Zimowe / Outdoor Geox B Gulpbw M</h2>
+                <div class="specs">
+                    Rozmiar: <span>23 EU</span> (wkładka: <span>155 mm</span>) | Kolor: <span>Coffee/Beige</span>
+                </div>
+                
+                <div class="condition-box">
+                    🔍 <strong>Stan:</strong> Membrana Geox Tex. Oryginalne pudełko z ceną 239,90 zł. Podeszwa w stanie bardzo dobrym (czysta, niezdarta), naturalne ślady użytkowania na zamszowych rzepach.
+                </div>
+
+                <div class="price-section">
+                    <span class="old-price">239,90 zł</span>
+                    <span class="new-price">85 zł</span>
+                </div>
+
+                <a href="https://wa.me/48511846301?text=Cześć20Chcę%20przeprowadzić%20symulację%20zakupu%20butów%20Geox%2023" class="btn" target="_blank">KUP TERAZ / NAPISZ (WHATSAPP)</a>
+            </div>
+
+            <div class="product-qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wa.me/48511846301?text=Symulacja%20zakupu%20Geox%2023" alt="QR Zamówienie">
+                <span>ZESKANUJ QR<br>DO SYMULACJI</span>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📦 Zasady zakupu, płatności i wysyłki</h3>
+            <p>1. <strong>Zamówienie:</strong> Klikasz przycisk lub skanujesz kod QR, żeby ustalić szczegóły i potwierdzić dostępność.</p>
+            <p>2. <strong>Płatność BLIK:</strong> Wpłatę za przedmiot przekazujesz bezpośrednio na poniższy numer telefonu:</p>
+            
+            <div class="blik-card">
+                <span style="color: #aaa; font-size: 11px;">NUMER DO PRZELEWU NA TELEFON (BLIK):</span>
+                <div class="blik-number">511 846 301</div>
+                <span style="color: #888; font-size: 11px;">Odbiorca: Andrzej Walczak</span>
+            </div>
+
+            <p>3. <strong>Wysyłka (Paczkomat):</strong> Koszt wysyłki ponosi kupujący. Nadanie realizuję błyskawicznie przez kod QR w Paczkomacie InPost – bez kolejek i bez zbędnych komplikacji.</p>
+
+            <div class="rules">
+                <strong>Regulamin / Informacja:</strong> Sprzedaż ma charakter prywatny i okazjonalny (przedmioty stanowią moją własność ponad 6 miesięcy). Opisy stanu są w 100% zgodne z prawdą ze zdjęć. Towar używany / z selekcji – <strong>zwrotom nie podlega</strong>.
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Andrzej Drop Store. Wszystkie prawa zastrzeżone.
+    </footer>
+
+    <script>
+        function changeImg(src, element) {
+            document.getElementById('currentMainImg').src = src;
+            let thumbs = document.querySelectorAll('.thumbs img');
+            thumbs.forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function adminAddImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageUrl = e.target.result;
+                    document.getElementById('currentMainImg').src = imageUrl;
+                    
+                    const thumbsContainer = document.getElementById('thumbsContainer');
+                    let thumbs = document.querySelectorAll('.thumbs img');
+                    thumbs.forEach(t => t.classList.remove('active'));
+
+                    const newThumb = document.createElement('img');
+                    newThumb.src = imageUrl;
+                    newThumb.className = 'active';
+                    newThumb.onclick = function() { changeImg(imageUrl, this); };
+                    
+                    thumbsContainer.appendChild(newThumb);
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+
+    <div id="ai-chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; font-family: 'Segoe UI', Tahoma, sans-serif;">
+        <div id="chat-window" style="display: none; width: 320px; background: #161616; border: 2px solid #ff9800; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); overflow: hidden; margin-bottom: 10px;">
+            <div style="background: #ff9800; color: #000; padding: 10px 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <span>🤖 Asystent AI Drop Store</span>
+                <span onclick="toggleChat()" style="cursor: pointer; font-size: 16px;">&times;</span>
+            </div>
+            <div id="chat-messages" style="height: 220px; padding: 12px; overflow-y: auto; font-size: 12px; color: #ddd; display: flex; flex-direction: column; gap: 8px; background: #0f0f0f;">
+                <div style="background: #222; padding: 8px 12px; border-radius: 8px; align-self: flex-start; border-left: 3px solid #ff9800;">
+                    Cześć! Jestem wirtualnym doradcą Andrzeja. W czym mogę pomóc odnośnie tych butów Geox (rozmiar 23)?
+                </div>
+            </div>
+            <div style="padding: 10px; background: #141414; display: flex; gap: 6px; border-top: 1px solid #2a2a2a;">
+                <input type="text" id="chat-input" placeholder="Napisz pytanie..." style="flex: 1; background: #222; border: 1px solid #444; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px; outline: none;" onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()" style="background: #ff9800; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Wyślij</button>
+            </div>
+        </div>
+        <button onclick="toggleChat()" style="background: #ff9800; color: #000; border: none; width: 50px; height: 50px; border-radius: 25px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,152,0,0.4); display: flex; align-items: center; justify-content: center; font-size: 22px; transition: 0.2s;">💬</button>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            win.style.display = win.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+
+            const container = document.getElementById('chat-messages');
+            
+            // Wiadomość użytkownika
+            const userDiv = document.createElement('div');
+            userDiv.style.cssText = 'background: #2a2a2a; padding: 8px 12px; border-radius: 8px; align-self: flex-end; color: #fff; max-width: 80%;';
+            userDiv.textContent = msg;
+            container.appendChild(userDiv);
+            
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+
+            // Inteligentna odpowiedź bota opierta na bazie wiedzy sklepu
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.style.cssText = 'background: #222; padding: 8px 12px; border-radius: 8px; align-self: flex-start; border-left: 3px solid #ff9800; max-width: 80%;';
+                
+                const lower = msg.toLowerCase();
+                if (lower.includes('rozmiar') || lower.includes('wkładka') || lower.includes('cm')) {
+                    botDiv.textContent = 'Buty mają rozmiar 23 EU, a wkładka ma dokładnie 155 mm.';
+                } else if (lower.includes('stan') || lower.includes('używan') || lower.includes('zamsz')) {
+                    botDiv.textContent = 'Stan jest bardzo dobry: podeszwa jest czysta i niewytarta, a na zamszowych rzepach występują naturalne ślady użytkowania. W zestawie oryginalne pudełko!';
+                } else if (lower.includes('wysyłk') || lower.includes('paczkomat')) {
+                    botDiv.textContent = 'Wysyłka realizowana jest ekspresowo przez Paczkomat InPost (kod QR bez kolejek). Koszt wysyłki ponosi kupujący.';
+                } else if (lower.includes('blik') || lower.includes('płatność') || lower.includes('kup')) {
+                    botDiv.textContent = 'Płatność odbywa się przelewem BLIK na numer telefonu: 511 846 301. Możesz też kliknąć przycisk zakupu, aby przejść na WhatsApp.';
+                } else {
+                    botDiv.textContent = 'To świetny wybór! W celu rezerwacji lub szybkiego zakupu skorzystaj z przycisku WhatsApp na stronie lub napisz pod numer 511 846 301.';
+                }
+                
+                container.appendChild(botDiv);
+                container.scrollTop = container.scrollHeight;
+            }, 600);
+        }
+    </script>
+
+</body>
+</html>

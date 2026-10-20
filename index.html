@@ -248,5 +248,230 @@
         }
     </script>
 
+<!-- ===== B2B: kalkulator + panel podklientów (wklej w miejsce starej sekcji B2B) ===== -->
+<style>
+#b2b-tools{--bt-bg:#16181d;--bt-card:#1e2128;--bt-line:#2f343e;--bt-text:#ececec;--bt-mute:#9aa1ad;--bt-or:#ff9900;--bt-wa:#25d366;
+  max-width:980px;margin:40px auto;padding:0 16px;color:var(--bt-text);font:inherit;box-sizing:border-box}
+#b2b-tools *{box-sizing:border-box}
+#b2b-tools h2{margin:0 0 6px;font-size:1.5rem}
+#b2b-tools h3{margin:0 0 14px;font-size:1.1rem;color:var(--bt-or)}
+#b2b-tools .bt-lead{color:var(--bt-mute);margin:0 0 22px}
+#b2b-tools .bt-grid{display:grid;gap:20px;grid-template-columns:1fr 1fr}
+@media(max-width:820px){#b2b-tools .bt-grid{grid-template-columns:1fr}}
+#b2b-tools .bt-box{background:var(--bt-card);border:1px solid var(--bt-line);border-radius:10px;padding:20px}
+#b2b-tools label{display:block;margin:12px 0 5px;font-size:.9rem;color:var(--bt-mute)}
+#b2b-tools input,#b2b-tools select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--bt-line);background:var(--bt-bg);color:var(--bt-text);font:inherit}
+#b2b-tools input:focus-visible,#b2b-tools select:focus-visible,#b2b-tools button:focus-visible{outline:2px solid var(--bt-or);outline-offset:2px}
+#b2b-tools .bt-result{margin-top:18px;padding:14px;border-radius:8px;background:var(--bt-bg);border:1px dashed var(--bt-line)}
+#b2b-tools .bt-price{font-size:1.9rem;font-weight:700;color:var(--bt-or)}
+#b2b-tools .bt-old{color:var(--bt-mute);text-decoration:line-through;margin-left:8px;font-size:1rem}
+#b2b-tools .bt-note{color:var(--bt-mute);font-size:.82rem;margin-top:8px}
+#b2b-tools .bt-partner{margin:0 0 14px;padding:10px 12px;border-radius:8px;border:1px solid var(--bt-or);color:var(--bt-or);font-size:.9rem}
+#b2b-tools .bt-btn{display:inline-block;margin-top:14px;padding:11px 16px;border:0;border-radius:8px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;color:#111}
+#b2b-tools .bt-wa{background:var(--bt-wa);width:100%;text-align:center}
+#b2b-tools .bt-wa[aria-disabled="true"]{opacity:.4;pointer-events:none}
+#b2b-tools .bt-add{background:var(--bt-or)}
+#b2b-tools .bt-sm{margin:0;padding:6px 10px;font-size:.82rem;background:var(--bt-line);color:var(--bt-text)}
+#b2b-tools .bt-del{background:transparent;border:1px solid var(--bt-line);color:var(--bt-mute)}
+#b2b-tools .bt-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#b2b-tools .bt-list{margin-top:18px;display:grid;gap:10px}
+#b2b-tools .bt-item{padding:12px;border:1px solid var(--bt-line);border-radius:8px;background:var(--bt-bg)}
+#b2b-tools .bt-item b{color:var(--bt-text)}
+#b2b-tools .bt-item small{display:block;color:var(--bt-mute);margin:2px 0 8px;word-break:break-all}
+#b2b-tools .bt-empty{color:var(--bt-mute);font-size:.9rem}
+</style>
+
+<section id="b2b-tools" aria-labelledby="bt-title">
+  <h2 id="bt-title">Wycena usługi dla Twoich danych</h2>
+  <p class="bt-lead">Wpisz liczbę wierszy i wybierz usługę. Dostaniesz orientacyjną cenę i termin.</p>
+
+  <div class="bt-grid">
+    <!-- 1. Kalkulator -->
+    <div class="bt-box">
+      <h3>Kalkulator</h3>
+      <div id="bt-partner" class="bt-partner" hidden></div>
+      <label for="bt-rows">Liczba wierszy w pliku Excel/CSV</label>
+      <input id="bt-rows" type="number" inputmode="numeric" min="1" max="1000000" step="1" placeholder="np. 2500">
+      <label for="bt-service">Rodzaj usługi</label>
+      <select id="bt-service"></select>
+      <div class="bt-result" aria-live="polite">
+        <div><span id="bt-price" class="bt-price">-</span><span id="bt-old" class="bt-old" hidden></span></div>
+        <div id="bt-time" class="bt-note">Wpisz liczbę wierszy.</div>
+      </div>
+      <a id="bt-wa" class="bt-btn bt-wa" aria-disabled="true" target="_blank" rel="noopener">Zamów wycenioną usługę na WhatsApp</a>
+      <p class="bt-note">Cena orientacyjna. Ostateczną kwotę potwierdzam po obejrzeniu struktury pliku.</p>
+    </div>
+
+    <!-- 2. Panel podklientów -->
+    <div class="bt-box">
+      <h3>Panel podklientów</h3>
+      <label for="bt-name">Imię lub firma</label>
+      <input id="bt-name" type="text" maxlength="60" autocomplete="off">
+      <div class="bt-row2">
+        <div><label for="bt-contact">NIP lub telefon</label><input id="bt-contact" type="text" maxlength="30" autocomplete="off"></div>
+        <div><label for="bt-disc">Rabat dla klienta (%)</label><input id="bt-disc" type="number" min="0" max="30" step="1" value="10"></div>
+      </div>
+      <button id="bt-addbtn" class="bt-btn bt-add" type="button">Dodaj podklienta</button>
+      <div id="bt-msg" class="bt-note" aria-live="polite"></div>
+      <div id="bt-list" class="bt-list"></div>
+      <p class="bt-note">Lista zapisuje się tylko w tej przeglądarce (localStorage). Link zawiera imię, rabat i numer podklienta, bez NIP/telefonu.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  // ======== KONFIGURACJA (zmień na swoje stawki) ========
+  var WHATSAPP = '48511846301';
+  var MAX_DISCOUNT = 30;               // górny limit rabatu (także dla linków partnerskich)
+  var SERVICES = {                      // cena = base + wiersze * perRow; termin wg progów wierszy
+    clean:  { name: 'Podstawowe czyszczenie danych',   base: 150, perRow: 0.04, rows24: 5000, rows48: 50000 },
+    report: { name: 'Automatyzacja raportu (Pandas)',  base: 400, perRow: 0.02, rows24: 3000, rows48: 30000 },
+    audit:  { name: 'Pełny audyt marż i kosztów',      base: 900, perRow: 0.06, rows24: 1500, rows48: 15000 }
+  };
+  var STORE_KEY = 'b2b_subclients_v1';
+
+  function $(id) { return document.getElementById(id); }
+  function pln(n) { return Number(n).toLocaleString('pl-PL', { maximumFractionDigits: 0 }) + ' zł'; }
+
+  // ======== Localstorage z zabezpieczeniem ========
+  function load() {
+    try { var v = JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); return Array.isArray(v) ? v : []; }
+    catch (e) { return []; }
+  }
+  function save(list) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); return true; }
+    catch (e) { return false; }
+  }
+
+  // ======== Rabat z linku partnera (?ref=&d=&n=) ========
+  var params = new URLSearchParams(location.search);
+  var partner = null;
+  (function () {
+    var d = parseInt(params.get('d'), 10);
+    var ref = (params.get('ref') || '').slice(0, 24);
+    if (ref && d >= 0 && d <= MAX_DISCOUNT) {
+      partner = { ref: ref, disc: d, name: (params.get('n') || '').slice(0, 60) };
+      var box = $('bt-partner');
+      box.textContent = 'Cena z rabatem partnera' + (partner.name ? ' ' + partner.name : '') + ': -' + d + '%';
+      box.hidden = false;
+    }
+  })();
+
+  // ======== Kalkulator ========
+  var sel = $('bt-service');
+  Object.keys(SERVICES).forEach(function (k) {
+    var o = document.createElement('option');
+    o.value = k; o.textContent = SERVICES[k].name;
+    sel.appendChild(o);
+  });
+
+  function timeFor(s, rows) {
+    if (rows <= s.rows24) return '24 godziny';
+    if (rows <= s.rows48) return '48 godzin';
+    return '3-5 dni roboczych (do potwierdzenia)';
+  }
+
+  function calc() {
+    var rows = parseInt($('bt-rows').value, 10);
+    var wa = $('bt-wa');
+    if (!(rows >= 1 && rows <= 1000000)) {
+      $('bt-price').textContent = '-';
+      $('bt-old').hidden = true;
+      $('bt-time').textContent = 'Wpisz liczbę wierszy (1 - 1 000 000).';
+      wa.setAttribute('aria-disabled', 'true'); wa.removeAttribute('href');
+      return;
+    }
+    var s = SERVICES[sel.value];
+    var gross = s.base + rows * s.perRow;
+    var disc = partner ? partner.disc : 0;
+    var net = Math.round(gross * (1 - disc / 100));
+    gross = Math.round(gross);
+    var time = timeFor(s, rows);
+
+    $('bt-price').textContent = pln(net);
+    var old = $('bt-old');
+    if (disc > 0) { old.textContent = pln(gross); old.hidden = false; } else { old.hidden = true; }
+    $('bt-time').textContent = 'Szacowany czas realizacji: ' + time;
+
+    var lines = [
+      'Dzień dobry, chcę zamówić usługę:',
+      '- Usługa: ' + s.name,
+      '- Liczba wierszy: ' + rows.toLocaleString('pl-PL'),
+      '- Szacowana cena: ' + pln(net) + (disc > 0 ? ' (rabat ' + disc + '%)' : ''),
+      '- Termin: ' + time
+    ];
+    if (partner) lines.push('- Partner: ' + partner.ref + (partner.name ? ' (' + partner.name + ')' : ''));
+    wa.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(lines.join('\n'));
+    wa.setAttribute('aria-disabled', 'false');
+  }
+  $('bt-rows').addEventListener('input', calc);
+  sel.addEventListener('change', calc);
+  calc();
+
+  // ======== Panel podklientów ========
+  function buildLink(c) {
+    var u = new URL(location.href);
+    u.search = ''; u.hash = 'b2b-tools';
+    u.searchParams.set('ref', c.id);
+    u.searchParams.set('d', String(c.discount));
+    u.searchParams.set('n', c.name);
+    return u.toString();
+  }
+
+  function copy(text, btn) {
+    function done() { var t = btn.textContent; btn.textContent = 'Skopiowano'; setTimeout(function () { btn.textContent = t; }, 1500); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { window.prompt('Skopiuj link:', text); });
+    } else { window.prompt('Skopiuj link:', text); }
+  }
+
+  function render() {
+    var list = load(), box = $('bt-list');
+    box.textContent = '';
+    if (!list.length) {
+      var e = document.createElement('div');
+      e.className = 'bt-empty'; e.textContent = 'Brak podklientów. Dodaj pierwszego powyżej.';
+      box.appendChild(e); return;
+    }
+    list.forEach(function (c) {
+      var link = buildLink(c);
+      var item = document.createElement('div'); item.className = 'bt-item';
+      var b = document.createElement('b'); b.textContent = c.name + ' · rabat ' + c.discount + '%';
+      var sm = document.createElement('small'); sm.textContent = (c.contact ? c.contact + ' · ' : '') + link;
+      var copyBtn = document.createElement('button'); copyBtn.type = 'button'; copyBtn.className = 'bt-btn bt-sm'; copyBtn.textContent = 'Kopiuj link';
+      copyBtn.addEventListener('click', function () { copy(link, copyBtn); });
+      var delBtn = document.createElement('button'); delBtn.type = 'button'; delBtn.className = 'bt-btn bt-sm bt-del'; delBtn.textContent = 'Usuń';
+      delBtn.style.marginLeft = '8px';
+      delBtn.addEventListener('click', function () {
+        if (confirm('Usunąć podklienta ' + c.name + '?')) { save(load().filter(function (x) { return x.id !== c.id; })); render(); }
+      });
+      item.appendChild(b); item.appendChild(sm); item.appendChild(copyBtn); item.appendChild(delBtn);
+      box.appendChild(item);
+    });
+  }
+
+  $('bt-addbtn').addEventListener('click', function () {
+    var name = $('bt-name').value.trim();
+    var contact = $('bt-contact').value.trim();
+    var disc = parseInt($('bt-disc').value, 10);
+    var msg = $('bt-msg');
+    if (!name) { msg.textContent = 'Wpisz imię lub nazwę firmy.'; return; }
+    if (!(disc >= 0 && disc <= MAX_DISCOUNT)) { msg.textContent = 'Rabat musi być w zakresie 0-' + MAX_DISCOUNT + '%.'; return; }
+    var list = load();
+    list.push({ id: 'p' + Date.now().toString(36), name: name, contact: contact, discount: disc });
+    if (!save(list)) { msg.textContent = 'Nie udało się zapisać w przeglądarce (tryb prywatny?).'; return; }
+    $('bt-name').value = ''; $('bt-contact').value = '';
+    msg.textContent = 'Dodano. Link jest na liście poniżej.';
+    render();
+  });
+
+  render();
+})();
+</script>
+<!-- ===== koniec B2B ===== -->
+
 </body>
 </html>
